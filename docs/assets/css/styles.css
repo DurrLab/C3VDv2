@@ -1,0 +1,45 @@
+h1 {
+  color: var(--bs-gray-800);
+  font-size: xx-large;
+}
+
+h2 {
+  color: var(--bs-gray-800);
+  font-size: x-large;
+}
+
+a {
+  color: var(--bs-gray-700);
+}
+
+a:hover {
+  color: var(--bs-gray-800);
+}
+
+#modal1 .modal-content {
+  background: transparent;
+  border: none;
+}
+
+.modal-dialog {
+  width: 560px;
+  /*max-width: 90%;*/
+  /*min-width: 600px;*/
+}
+
+.modal.dialog {
+  width: 560px;
+}
+
+.modal-dialog {
+  width: auto;
+  max-width: 560px;
+  max-height: 315px;
+  height: auto;
+}
+
+.modal-content {
+  background-color: rgba(0,0,0,0);
+  border: 0px;
+}
+

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>C3VDv2 : Colonoscopy 3D Video Dataset with Enhanced Realism</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/before-after.compiled.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="modal fade" role="dialog" tabindex="-1" id="video-modal" style="border-color: rgba(0,0,0,0);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content"><div>
+    <iframe id="iframeYoutube" width="560" height="315" src="https://www.youtube.com/embed/l-8SCV6-fUw?modestbranding=1&autohide=1&showinfo=0&controls=0&fs=0" frameborder="0"></iframe>
+</div></div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: 0px;">
+        <div class="row justify-content-center" style="margin-top: 15px;margin-bottom: 15px;">
+            <div class="col-9">
+                <h1 class="text-center">C3VDv2 : Colonoscopy 3D Video Dataset with Enhanced Realism</h1>
+                <div class="row text-center justify-content-center">
+                    <div class="col-4"><a href="https://scholar.google.com/citations?user=FjX3JAEAAAAJ">Mayank V. Golhar</a></div>
+                    <div class="col-4">Lucas Sebastian Galeano Fretes</div>
+                    <div class="col-4">Loren Ayers</div>
+                </div>
+                <div class="row text-center justify-content-center">
+                    <div class="col-4"><a href="https://scholar.google.com/citations?hl=en&amp;user=a3eRS3sAAAAJ">Venkata S. Akshintala</a></div>
+                    <div class="col-4"><a href="https://scholar.google.com/citations?user=y8RsSRwAAAAJ&amp;hl=en">Taylor L. Bobrow</a></div>
+                    <div class="col-4"><a href="https://scholar.google.com/citations?user=AdhZfSkAAAAJ&amp;hl=en">Nicholas J. Durr</a></div>
+                </div>
+
+                
+
+                <div class="row">
+                    <div class="col">
+                        <p class="text-center" style="margin-bottom: 0px;">Johns Hopkins University</p>
+                    </div>
+                </div>
+
+                 <!-- Navigation Menu -->
+                 <nav class="nav justify-content-center mb-4">
+                    <a class="nav-link" href="#whats-new">What's New?</a>
+                    <a class="nav-link" href="#examples">Examples</a>
+                    <a class="nav-link" href="#registered-1">Registered Videos</a>
+                    <a class="nav-link" href="#screening">Screening Videos</a>
+                    <a class="nav-link" href="#models">3D Model Files</a>
+                    <a class="nav-link" href="#calibration-files">Calibration Files</a>
+                    <a class="nav-link" href="#original-c3vd-data">Original C3VD Data</a>
+                    <a class="nav-link" href="#code">Code</a>
+                    <a class="nav-link" href="#citation">Citation</a>
+                  </nav>
+            </div>
+        </div>
+        <!-- <div class="row justify-content-center" style="margin-top: 15px;margin-bottom: 15px;">
+            <div class="col text-center"><img class="img-fluid" src="assets/img/sample.gif"></div>
+        </div> -->
+        <div class="row" style="margin-bottom: 15px;margin-top: 15px;">
+            <div class="col">
+                <h2 class="text-center">Abstract</h2>
+                <p>Computer vision techniques have the potential to improve the diagnostic performance of colonoscopy, but the lack of 3D colonoscopy datasets for training and validation hinders their development. This paper introduces <i>C3VDv2</i>, the second version (<i>v2</i>) of the high-definition <i>C</i>olonoscopy <i>3</i>D <i>V</i>ideo <i>D</i>ataset, featuring enhanced realism designed to facilitate the quantitative evaluation of 3D colon reconstruction algorithms. 192 video sequences were captured by imaging 60 unique, high-fidelity silicone colon phantom segments. Ground truth depth, surface normals, optical flow, occlusion, six-degree-of-freedom pose, coverage maps, and 3D models are provided for 169 colonoscopy videos. Eight simulated screening colonoscopy videos acquired by a gastroenterologist are provided with ground truth poses. The dataset includes 15 videos featuring colon deformations for qualitative assessment. C3VDv2 emulates diverse and challenging scenarios for 3D reconstruction algorithms, including fecal debris, mucous pools, blood, debris obscuring the colonoscope lens, en-face views, and fast camera motion. The enhanced realism of C3VDv2 will allow for more robust and representative development and evaluation of 3D reconstruction algorithms. <br></p>
+            </div>
+        </div>
+        <div class="text-center" style="margin: 20px 0;">
+        <a href="https://arxiv.org/abs/2506.24074" target="_blank" class="btn btn-outline-primary mx-2">
+            <i class="bi bi-file-earmark-text"></i> arXiv Paper
+        </a>
+
+        <a href="https://github.com/DurrLab/C3VD" target="_blank" class="btn btn-outline-dark mx-2">
+            <i class="bi bi-github"></i> Code
+        </a>
+        </div>
+
+        <hr>
+        <div class="row" style="margin-bottom: 15px;margin-top: 15px;">
+            <div class="col">
+                <h2 class="text-center" id="whats-new">What's New?</h2>
+                <ul>
+                    <li><strong>Larger dataset</strong> with 8X videos (n=192) and 2X colon geometries compared to C3VD.</li>
+                    <li><strong>Realistic artifacts</strong> such as fecal debris, mucus pools, blood, foam, and debris and water on the lens. And instruments like water jets, lens cleaning, and suction.</li>
+                    <li><strong>Challenging scenarios</strong> include fast and less smooth camera motion, en-face to down-the-barrel transitions, close-up en-face views of textureless surfaces, the scope getting covered in debris, and lens cleaning. Trajectories such as straight-line in-and-out motions, loops where the first and last points are the same, and paths where the first half mirrors the second half with lens cleaning in the middle.</li>
+                    <li><strong>Colon deformation</strong> videos for qualitative assessment. Camera poses and undeformed 3D models are provided without pixel-wise GT.</li>
+                    <li><strong>Paired clean & debris-filled colon frames.</strong> For every debris-filled colon video, there is a corresponding clean colon video with the same camera trajectory, imaging the same colon phantom.</li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div class="row g-0 text-center align-items-center">
+            <div class="col-auto m-auto">
+                <h2>Examples</h2>
+                <!-- <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Fast motion with lens cleaning.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/blsry5ShjJA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div> -->
+    <!-- Video 1 -->
+    <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Polyp cleaning with water jet followed by scope dipping in mucous pool and lens cleaning.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/lFLh3qCNFyA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+     <!-- Video 3 -->
+     <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Fast Loop</b></span><br></p>
+     <div>
+         <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/jmZgkBGMCmk?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+     </div>
+
+    <!-- Video 2 -->
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Flowing red debris with dirty lens and lens cleaning. First half of camera trajectory mirrors the second half.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/Qqp5yh4Kw2M?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+   
+
+    <!-- Video 4 -->
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Exploratory Motion</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/qWCpDH5GiMw?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+    <!-- Video 5 -->
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>En face to down the barrel motion</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/I6cZRKQJRBc?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+    <hr>
+    <div class="row text-center">
+        <p style="margin-bottom: 1px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Synchronized clean and debris colon video pair. </b></span><br></p>
+        <div class="text-center" style="margin-top: 1px; margin-bottom: 4px">
+            <button id="playButton" class="btn btn-primary">Play Both Videos</button>
+        </div>
+        
+        <!-- Video 1 -->
+        <div class="col-md-6">
+            <iframe id="video1" allowfullscreen frameborder="0" 
+                src="https://www.youtube-nocookie.com/embed/8cD3riZcSpA?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
+                width="560" height="315">
+            </iframe>
+        </div>
+    
+        <!-- Video 2 -->
+        <div class="col-md-6">
+            <iframe id="video2" allowfullscreen frameborder="0" 
+                src="https://www.youtube-nocookie.com/embed/UjG4vS1H8jY?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
+                width="560" height="315">
+            </iframe>
+        </div>
+    </div>
+    
+    <!-- Play Button -->
+    
+    
+    <script>
+        // Synchronize video playback
+        document.getElementById('playButton').addEventListener('click', function () {
+            const video1 = document.getElementById('video1').contentWindow;
+            const video2 = document.getElementById('video2').contentWindow;
+    
+            // Send play commands to both videos
+            video1.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            video2.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        });
+    </script>
+<hr>
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Colon deformation video.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/LCPLj9rk-qM?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+<hr>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col">
+                <h1 class="text-center">Dataset</h1>
+                    <p>C3VDv2 consists of two distinct colon shapes (c1 and c2), each segmented into seven to eight anatomical regions, with each segment further having four unique textures and colors (t1, t2, t3, and t4). C3VDv2 contains 192 videos with a total of 169,371 frames. It comprises three different types of video sequences:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Pixel-level Ground Truth Videos:</strong>
+                        <a href="#registered-1">Registered Videos</a> were acquired with a static, undeformed colon phantom and are provided with per-frame ground truth maps (depth, normals, optical flow, etc.). Up to three videos were recorded per phantom segment:
+                        <ul>
+                            <li><strong>v1:</strong> clean colon with a baseline camera trajectory and imaging settings.</li>
+                            <li><strong>v2:</strong> clean colon with a different camera trajectory and imaging settings as v1.</li>
+                            <li><strong>v3:</strong> debris-filled colon using the same camera trajectory and imaging settings as v2.</li>
+                        </ul>
+                        This category includes 169 short videos with a total of 67,886 frames.
+                    </li>
+                    <li>
+                        <strong>Deformation Videos:</strong>
+                        <a href="#deformation">Deformation Videos</a> consist of <strong>v4</strong> videos featuring externally induced active phantom deformation, captured with either static or linear camera motion. All videos include debris. Each folder contains all recorded RGB frames and a corresponding <em>pose.txt</em> file (if camera is not stationary). The camera poses are in a frame-wise homogeneous format. This folder contains 15 short videos with a total of 6,185 frames.
+                    </li>
+                    <li>
+                        <strong>Simulated Screening Videos:</strong>
+                        <a href="#screening">Screening Videos</a> comprise full-colon withdrawal sequences performed by a gastroenterologist to capture realistic camera motion. Similar to deformation videos, only RGB frames and camera poses in <em>pose.txt</em> are provided. A total of 8 videos are included, comprising 95,300 frames.
+                    </li>
+                </ul>
+                Parameters such as camera trajectory, speed, edge enhancement settings, simulated artifacts and challenging cases description, are comprehensively documented in the <a href=#>C3VDv2_Data_Summary_Sheet_v1.xlsx</a>.
+                </p>
+                <p>The dataset is publicly hosted on <a href=https://archive.data.jhu.edu/dataset.xhtml?persistentId=doi:10.7281/T1/JC64MK" target="_blank">Johns Hopkins Research Data Repository</a>. You can either directly download from the repository page or via links below (Dataverse API based). We have also provided a bash script to download data via Dataverse API calls.</p>
+
+            </div>
+        </div>
+        <h2 class="text-center" id="registered-1" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Registered Videos</h2>
+        <div class="row">
+            <div class="col">
+                <p style="margin-bottom: 0px;">For each registered video frame, the dataset includes:</p>
+                <ul>
+                    <li><strong>RGB frame:&nbsp;</strong><i>rgb/NNNN.png</i> represents the raw (distorted) video frame from the Olympus CF-HQ190L video colonoscope. The black border with video metadata was cropped, resulting in an image size of 1350 x 1080 pixels. NNNN denotes the 4-digit frame number within the video.<br></li>
+                    <li><strong>Depth frame:&nbsp;</strong><i>depth/NNNN_depth.tiff</i> represents the depth along the camera frame's Z-axis, clamped between 0 and 100 mm, and linearly scaled and encoded as a 16-bit grayscale image. For example, a pixel value of 16,384 corresponds to a depth of 25 mm.<br></li>
+                    <li><strong>Surface normal frame:&nbsp;</strong><i>normals/NNNN_normals.tiff</i> stores the X, Y, and Z components of the surface normal vector for each surfel in the R, G, and B color channels, respectively. Components are linearly scaled from &plusmn1 to 0-65535 and encoded as a 16-bit color image. Normal vector directions are defined with respect to the camera coordinate system: +x points right, +y points down, and +z points along the viewing direction (i.e., away from the camera).<br></li>
+                    <li><strong>Optical flow frame:&nbsp;</strong><i>optical_flow/NNNN_flow.tiff</i>  depicts the optical flow from the current to the previous frame. X-direction motion (left to right, clamped between -20 to 20 pixels) is stored in the red channel, and Y-direction motion (up to down, clamped between -20 to 20 pixels) is stored in the green channel. Flow values are linearly scaled and encoded as a 16-bit color image.<br></li>
+                </ul>
+            </div>
+            <div class="col">
+                <ul>
+                    <li><strong>Occlusion frame:&nbsp;</strong><i>occlusions/NNNN_occlusion.tiff</i> indicates pixels that occlude other mesh faces within 100 mm of the camera origin, assigning a value of 255 to these pixels and 0 to all others. This binary data is encoded as an 8-bit grayscale image.<br></li>
+                    <li><strong>Diffuse Frame:&nbsp;</strong><i>diffuse/NNNN_diffuse.png</i> encodes Lambertian reflectance, computed using the dot product of the surface normal and the direction of the incident light. Reflectance values range from 0.1 to 1.0 and are linearly scaled and encoded as an 8-bit grayscale image.<br></li>
+                    <li><strong>Camera pose:&nbsp;</strong>&nbsp;<i>pose.txt</i> contains each frame's flattened homogeneous camera-to-world transformation matrix (row major order).</li>
+                    <li><strong>3D model and coverage map:</strong> <i>coverage_mesh.obj</i> stores the ground truth triangulated mesh. Texture vertices store coverage values, where vt=1 indicates an observed face, and vt=2 indicates an unobserved face.</li>
+                </ul>
+            </div>
+        </div>
+
+                <!-- Registered Videos – New Dynamic Table -->
+        <div class="row">
+            <div class="col">
+            <div class="table-responsive">
+                <table id="registered-videos-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th>
+                    <th>Segment</th>
+                    <th>Phantom Number</th>
+                    <th>Video Number</th>
+                    <th># Frames</th>
+                    <th>Preview</th>
+                    <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JS will populate rows here -->
+                </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+        <h2 class="text-center" id="deformation" style="margin:20px 0 8px;">Deformation Videos</h2>
+        <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+            <table id="deformation-videos-table" class="table table-sm">
+                <thead>
+                <tr>
+                    <th>Colon</th><th>Segment</th><th>Phantom Number</th>
+                    <th>Video Number</th><th># Frames</th>
+                    <th>Preview</th><th>Download</th>
+                </tr>
+                </thead>
+                <tbody><!-- filled by JS --></tbody>
+            </table>
+            </div>
+        </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center" id="screening" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Screening Videos</h2>
+            </div>
+        </div>
+
+        <div class="table-responsive" style="margin-top:20px">
+            <table id="screening-videos-table" class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Colon</th><th>Segment</th><th>Phantom Number</th>
+                  <th>Video Number</th><th># Frames</th>
+                  <th>Preview</th><th>Download</th>
+                </tr>
+              </thead>
+              <tbody><!-- filled by JS --></tbody>
+            </table>
+          </div>
+        
+
+        <!-- 3D model files -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">3D Model Files</h2>
+            <div class="table-responsive">
+                <table id="models-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th>
+                    <th>Lumen Download</th><th>Mold Download</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+        <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Camera Calibration Files</h2>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <p>The spherical omnidirectional camera intrinsics are given in <a href="#">camera_intrinsics.txt</a>. Additionally, two calibration sequences are provided for geometric and photometric calibration in the camera_calibration folder:
+                <ul>
+                    <li>
+                        <strong><a href="#">camera_calib_checker.avi</a>:</strong> This video captures a 8x11 checkerboard pattern with a square size of 10 mm.
+                    </li>
+                    <li>
+                        <strong><a href="#">camera_calib_vicalib.avi</a>:</strong> This video features the "big_pattern" target from the Endomapper repository <a href="https://arxiv.org/abs/2303.07041" target="_blank">[azagra2023endomapper]</a>. The <a href="https://github.com/endomapper/EM_Dataset-PhotometricCalibration/blob/main/misc/big_pattern.pdf" target="_blank">big_pattern.pdf</a> file, when printed at 100% scale, includes a grid spacing of 5.29 mm, a large radius of 1.58 mm, and a small radius of 1.06 mm.
+                    </li>
+                </ul>
+</div>
+</div>
+<hr>
+                <!-- =========================================
+            Original C3VD  (insert after Screening Videos)
+            ========================================= -->
+        <h1 class="text-center" id="original-c3vd-data" style="margin:40px 0 8px;">
+            Original&nbsp;C3VD
+        </h1>
+        
+        <!-- Original Registered Videos -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Registered Videos (C3VD v1)</h2>
+            <div class="table-responsive">
+                <table id="orig-registered-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th><th>Texture</th><th>Video</th>
+                    <th># Frames</th><th>Preview</th><th>Old Name</th><th>Download</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+        
+        <!-- Original Screening Videos -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" style="margin:20px 0 8px;">Screening Videos (C3VD v1)</h2>
+            <div class="table-responsive">
+                <table id="orig-screening-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th><th>Texture</th><th>Video</th>
+                    <th># Frames</th><th>Preview</th><th>Download</th><th>Old Name</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+        <!-- 3D model files -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">3D Model Files (C3VD v1)</h2>
+            <div class="table-responsive">
+                <table id="orig-models-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th>
+                    <th>Lumen Download</th><th>Mold Download</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+       
+        <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Calibration Files</h2>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <p><a href="http://drive.google.com/uc?export=view&amp;id=1ZTNyLx0p19U2Q3vl8dUe2YxxxA-9WisI&amp;confirm=t">cfhq190l_10x10mm_checkerboard_images.zip</a></p>
+            </div>
+            <div class="col-auto">
+                <p><a href="http://drive.google.com/uc?export=view&amp;id=1gUA7mAM7DSD9oCvPH1hgQ0s2hhg1kOaC&amp;confirm=t">cfhq190l_omnidirectional_params.zip</a></p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-auto text-center">
+                <h2 class="text-center" id="code" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;"><a href="https://github.com/DurrLab/C3VD">Registration and Rendering Code Available on GitHub</a></h2><img src="assets/img/github.png">
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 15px;margin-top: 15px;">
+            <div class="col-md-9">
+                <h2 id="citation"><span style="color: rgb(51, 51, 51);">Citation</span></h2>
+                <p><span style="color: rgb(51, 51, 51);">Please consider citing our publications if you use code or data from this site.</span><br></p><pre style="background-color:#f0f0f0; padding:10px; border-radius:3px;">
+<code class="language-latex"> 
+ @article{golhar2025c3vdv2,
+  title={C3VDv2--Colonoscopy 3D video dataset with enhanced realism},
+  author={Golhar, Mayank V and Fretes, Lucas Sebastian Galeano and Ayers, Loren and Akshintala, Venkata S and Bobrow, Taylor L and Durr, Nicholas J},
+  journal={arXiv preprint arXiv:2506.24074},
+  year={2025}
+}
+ 
+  @article{bobrow2023,
+  title={Colonoscopy 3D video dataset with paired depth from 2D-3D registration},
+  author={Bobrow, Taylor L and Golhar, Mayank and Vijayan, Rohan and Akshintala, Venkata S and Garcia, Juan R and Durr, Nicholas J},
+  journal={Medical Image Analysis},
+  pages={102956},
+  year={2023},
+  publisher={Elsevier},
+}</code>
+</pre>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px;">
+            <div class="col text-center" style="margin: 0px;padding: 0px;margin-top: 40px;"><p xmlns:cc="http://creativecommons.org/ns#" >This work is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p></div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- 👇 define initDataverseDownloadLinks() first -->
+    <script src="assets/js/dataverse-download.js"></script>
+
+    <!-- 👇 now load and call it inside this file -->
+    <script src="assets/js/load_csv_tables.js"></script>
+    <script src="assets/js/video-modal.js"></script>
+</body>
+
+</html>

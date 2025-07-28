@@ -1,0 +1,102 @@
+$(document).ready(function(){
+  $("#video-modal").on("hidden.bs.modal",function(){
+    $("#iframeYoutube").attr("src","#");
+  })
+})
+
+function changeVideo(vId){
+  var iframe=document.getElementById("iframeYoutube");
+  iframe.src="https://www.youtube.com/embed/"+vId+"?rel=0&modestbranding=1&autohide=1&showinfo=0&controls=1&fs=0&loop=1";
+  $("#video-modal").modal("show");
+}
+
+// Delegate clicks on any dynamically-created preview cells
+$(document).on('click', '.preview-cell', function(){
+    // `data-youtube` holds the YouTube ID you set in populateTable()
+    const ytId = $(this).data('youtube');
+    if (ytId) {
+      changeVideo(ytId);
+    } else {
+      console.warn('No YouTube ID on', this);
+    }
+  });
+  
+
+$("#c1a").click(function(){
+    changeVideo("esEBiCIfDUY")
+})
+$("#c1b").click(function(){
+    changeVideo("atjrygVuUmU")
+})
+$("#c2a").click(function(){
+    changeVideo("h8oLhvG2kog")
+})
+$("#c2b").click(function(){
+    changeVideo("GBtRipJ2zAs")
+})
+$("#c2c").click(function(){
+    changeVideo("ryAwRXJ9dYU")
+})
+$("#c3a").click(function(){
+    changeVideo("qZ12JdHU1es")
+})
+$("#c4a").click(function(){
+    changeVideo("rsX_jeobzbA")
+})
+$("#c4b").click(function(){
+    changeVideo("zqD3qsnOkic")
+})
+$("#d4a").click(function(){
+    changeVideo("dQLlzx6lBTE")
+})
+$("#s1a").click(function(){
+    changeVideo("flhT2kCXa4c")
+})
+$("#s2a").click(function(){
+    changeVideo("BCFzjgTAbq0")
+})
+$("#s3a").click(function(){
+    changeVideo("Vu_J_j4e6-U")
+})
+$("#s3b").click(function(){
+    changeVideo("gDyYHGcAwJE")
+})
+$("#t1a").click(function(){
+    changeVideo("WuCjvJ1Dx9M")
+})
+$("#t1b").click(function(){
+    changeVideo("sE04yM-TMWk")
+})
+$("#t2a").click(function(){
+    changeVideo("kxCAbejwwlQ")
+})
+$("#t2b").click(function(){
+    changeVideo("Pdr7Y3uCyYE")
+})
+$("#t2c").click(function(){
+    changeVideo("ySCoXwM0Nrg")
+})
+$("#t3a").click(function(){
+    changeVideo("hFzc7p1tzHg")
+})
+$("#t3b").click(function(){
+    changeVideo("gasn68GNHD8")
+})
+$("#t4a").click(function(){
+    changeVideo("lELJRIanN78")
+})
+$("#t4b").click(function(){
+    changeVideo("H8TGO44c5_I")
+})
+$("#screen1").click(function(){
+    changeVideo("i_D2epwoxt8")
+})
+$("#screen2").click(function(){
+    changeVideo("FB3wd9NNKY4")
+})
+$("#screen3").click(function(){
+    changeVideo("v_mQcKtZI2k")
+})
+$("#screen4").click(function(){
+    changeVideo("-612boxukyQ")
+})
