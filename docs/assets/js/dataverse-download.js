@@ -85,14 +85,34 @@
 //     });
 // });
 
-// Make sure it's a global function
-window.initDataverseDownloadLinks = function () {
+// One-time metadata cache
+let dataverseMetadata = null;
+
+window.initDataverseDownloadLinks = async function () {
   console.log("Dataverse download script running");
 
   const DOMAIN = "https://archive.data.jhu.edu";
   const DOI = "10.7281/T1/JC64MK";
 
-  // const downloadLinks = document.querySelectorAll('a[href="#"]');
+  async function fetchMetadataOnce() {
+    if (dataverseMetadata) return dataverseMetadata;
+    console.log("Fetching dataset metadata...");
+
+    try {
+      const response = await fetch(`${DOMAIN}/api/datasets/:persistentId?persistentId=doi:${DOI}`);
+      if (!response.ok) {
+        throw new Error(`Dataverse responded with ${response.status}`);
+      }
+      const data = await response.json();
+      dataverseMetadata = data.data?.latestVersion?.files || [];
+      console.log(`Fetched ${dataverseMetadata.length} files from Dataverse.`);
+    } catch (err) {
+      console.error("Failed to fetch metadata:", err);
+      dataverseMetadata = []; // Prevent retry flood
+    }
+
+    return dataverseMetadata;
+  }
 
   const downloadLinks = document.querySelectorAll('a[href="#"]:not(.download-processed)');
   console.log(`Found ${downloadLinks.length} download links`);
@@ -102,48 +122,47 @@ window.initDataverseDownloadLinks = function () {
     const filenameText = filenameSpan ? filenameSpan.textContent.trim() : link.textContent.trim();
     const filename = filenameText.split(' ')[0];
 
-    link.addEventListener('click', async function(e) {
+    link.addEventListener('click', async function (e) {
       e.preventDefault();
       const originalHTML = link.innerHTML;
-      link.innerHTML = '<span style="color: rgb(0, 0, 0);">Loading...</span>';
+      link.innerHTML = '<span style="color: black;">Loading...</span>';
       link.style.pointerEvents = 'none';
 
       try {
-        const response = await fetch(`${DOMAIN}/api/datasets/:persistentId?persistentId=doi:${DOI}`);
-        const data = await response.json();
+        const files = await fetchMetadataOnce();
+        const file = files.find(f => f.label === filename);
 
-        const file = data.data?.latestVersion?.files?.find(file => file.label === filename);
-
-        if (file) {
-          const fileId = file.dataFile.id;
-          const downloadUrl = `${DOMAIN}/api/access/datafile/${fileId}`;
-          const downloadLink = document.createElement('a');
-          downloadLink.href = downloadUrl;
-          downloadLink.target = '_blank';
-          downloadLink.download = filename;
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-        } else {
-          console.error(`File "${filename}" not found`);
+        if (!file) {
+          console.error(`File "${filename}" not found in metadata`);
           alert(`File "${filename}" not found in dataset.`);
+          return;
         }
-      } catch (error) {
-        console.error('Error downloading file:', error);
-        alert(`Error downloading ${filename}: ${error.message}`);
+
+        const fileId = file.dataFile.id;
+        const downloadUrl = `${DOMAIN}/api/access/datafile/${fileId}`;
+        const tempLink = document.createElement('a');
+        tempLink.href = downloadUrl;
+        tempLink.download = filename;
+        tempLink.target = '_blank';
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+      } catch (err) {
+        console.error(`Error downloading file "${filename}":`, err);
+        alert(`Error downloading file "${filename}": ${err.message}`);
       } finally {
         link.innerHTML = originalHTML;
         link.style.pointerEvents = 'auto';
       }
     });
 
-    // Mark link as processed
+    // Mark as processed
     link.classList.add('download-processed');
 
-    // Style it
+    // Style
     if (filenameSpan) {
       link.title = "Click to download";
       link.style.cursor = "pointer";
     }
   });
-}
+};
