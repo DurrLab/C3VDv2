@@ -20,9 +20,9 @@ window.initDataverseDownloadLinks = async function () {
       
       // Try local proxy first (if running), then fallback to public proxies
       const proxies = [
-        `http://localhost:8001/proxy?url=${encodeURIComponent(apiUrl)}`, // Local proxy
-        `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`
+        //`http://localhost:8001/proxy?url=${encodeURIComponent(apiUrl)}`, // Local proxy
+        `https://api.cors.lol/?url=${encodeURIComponent(apiUrl)}`,                                                                                                                                                                │
+        `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(apiUrl)}`
       ];
       
       let response;
