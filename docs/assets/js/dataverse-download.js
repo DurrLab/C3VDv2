@@ -1,92 +1,9 @@
-// // // Dataverse download handler
-// // console.log("Dataverse download script loaded");
-// document.addEventListener('DOMContentLoaded', function() {
-//     console.log("DOM content loaded");
-
-//     // The 2 values below are the only ones you need to change.
-//     const DOMAIN = "https://archive.data.jhu.edu";
-//     const DOI = "10.7281/T1/JC64MK";
-    
-//     // Find all download links in tables - target links in the download column
-//     const downloadLinks = document.querySelectorAll('table a[href="#"]');
-//     console.log(`Found ${downloadLinks.length} download links`);
-    
-//     // Add click event listener to each link
-//     downloadLinks.forEach(link => {
-//         // Extract the filename (it's in a span inside the link)
-//         const filenameSpan = link.querySelector('span');
-//         const filenameText = filenameSpan ? filenameSpan.textContent.trim() : link.textContent.trim();
-        
-//         // Extract just the filename part without the file size in parentheses
-//         const filename = filenameText.split(' ')[0];
-//         console.log(`Processing link for file: ${filename}`);
-        
-//         // Add click event listener
-//         link.addEventListener('click', async function(e) {
-//             e.preventDefault();
-            
-//             // Show loading state
-//             const originalHTML = link.innerHTML;
-//             link.innerHTML = '<span style="color: rgb(0, 0, 0);">Loading...</span>';
-//             link.style.pointerEvents = 'none';
-            
-//             try {
-//                 console.log(`Attempting to download: ${filename}`);
-                
-//                 // Get file ID from Dataverse API
-//                 console.log(`Fetching dataset info from DOI: ${DOI}`);
-//                 const response = await fetch(`${DOMAIN}/api/datasets/:persistentId?persistentId=doi:${DOI}`);
-//                 const data = await response.json();
-//                 console.log("Dataset info retrieved:", data);
-                
-//                 // Find the file with matching label
-//                 const file = data.data?.latestVersion?.files?.find(file => file.label === filename);
-                
-//                 if (file) {
-//                     console.log(`Found file in dataset: ${JSON.stringify(file)}`);
-//                     const fileId = file.dataFile.id;
-//                     console.log(`File ID: ${fileId}`);
-                    
-//                     // Get direct download URL
-//                     const downloadUrl = `${DOMAIN}/api/access/datafile/${fileId}`;
-//                     console.log(`Direct download URL: ${downloadUrl}`);
-                    
-//                     // Create a temporary link to trigger the download
-//                     const downloadLink = document.createElement('a');
-//                     downloadLink.href = downloadUrl;
-//                     downloadLink.target = '_blank'; // Open in new tab to handle the redirect
-//                     downloadLink.download = filename;
-//                     document.body.appendChild(downloadLink);
-//                     downloadLink.click();
-//                     document.body.removeChild(downloadLink);
-                    
-//                     console.log(`Download initiated for ${filename}`);
-//                 } else {
-//                     console.error(`File "${filename}" not found in dataset`);
-//                     console.log("Available files:", data.data?.latestVersion?.files?.map(f => f.label) || []);
-//                     throw new Error(`File "${filename}" not found in dataset. Check the exact filename in the Dataverse repository.`);
-//                 }
-//             } catch (error) {
-//                 console.error('Error downloading file:', error);
-//                 alert(`Error downloading ${filename}: ${error.message}`);
-//             } finally {
-//                 // Restore original state
-//                 link.innerHTML = originalHTML;
-//                 link.style.pointerEvents = 'auto';
-//             }
-//         });
-        
-//         // Add visual indication that this is a download link
-//         if (filenameSpan) {
-//             // Add a subtle download arrow indicator
-//             link.title = "Click to download";
-//             link.style.cursor = "pointer";
-//         }
-//     });
-// });
-
+// Dataverse download handler
+console.log("Dataverse download script loaded");
 // One-time metadata cache
 let dataverseMetadata = null;
+// Track if event listener has been added
+let clickHandlerAttached = false;
 
 window.initDataverseDownloadLinks = async function () {
   console.log("Dataverse download script running");
@@ -99,13 +16,56 @@ window.initDataverseDownloadLinks = async function () {
     console.log("Fetching dataset metadata...");
 
     try {
-      const response = await fetch(`${DOMAIN}/api/datasets/:persistentId?persistentId=doi:${DOI}`);
-      if (!response.ok) {
-        throw new Error(`Dataverse responded with ${response.status}`);
+      const apiUrl = `${DOMAIN}/api/datasets/:persistentId?persistentId=doi:${DOI}`;
+      
+      // Try local proxy first (if running), then fallback to public proxies
+      const proxies = [
+        `http://localhost:8001/proxy?url=${encodeURIComponent(apiUrl)}`, // Local proxy
+        `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`
+      ];
+      
+      let response;
+      let lastError;
+      
+      for (const proxyUrl of proxies) {
+        try {
+          console.log(`Trying proxy: ${proxyUrl.substring(0, 60)}...`);
+          response = await fetch(proxyUrl, {
+            headers: {
+              'Accept': 'application/json',
+            }
+          });
+          
+          if (response.ok) {
+            const text = await response.text();
+            // Some proxies wrap the response, try to parse as JSON
+            let data;
+            try {
+              data = JSON.parse(text);
+            } catch (e) {
+              // If parsing fails, the proxy might have returned the data directly
+              // Try to extract JSON from the response
+              const jsonMatch = text.match(/\{[\s\S]*\}/);
+              if (jsonMatch) {
+                data = JSON.parse(jsonMatch[0]);
+              } else {
+                throw new Error('Could not parse JSON from proxy response');
+              }
+            }
+            
+            dataverseMetadata = data.data?.latestVersion?.files || [];
+            console.log(`Fetched ${dataverseMetadata.length} files from Dataverse.`);
+            return dataverseMetadata;
+          }
+        } catch (proxyError) {
+          console.warn(`Proxy failed:`, proxyError.message);
+          lastError = proxyError;
+          continue;
+        }
       }
-      const data = await response.json();
-      dataverseMetadata = data.data?.latestVersion?.files || [];
-      console.log(`Fetched ${dataverseMetadata.length} files from Dataverse.`);
+      
+      throw lastError || new Error('All proxy attempts failed');
     } catch (err) {
       console.error("Failed to fetch metadata:", err);
       dataverseMetadata = []; // Prevent retry flood
@@ -114,55 +74,123 @@ window.initDataverseDownloadLinks = async function () {
     return dataverseMetadata;
   }
 
-  const downloadLinks = document.querySelectorAll('a[href="#"]:not(.download-processed)');
-  console.log(`Found ${downloadLinks.length} download links`);
-
-  downloadLinks.forEach(link => {
+  // Use event delegation to catch all clicks on download links, even dynamically created ones
+  // This ensures links are intercepted even if they're created after this function runs
+  // Only attach the listener once
+  if (!clickHandlerAttached) {
+    clickHandlerAttached = true;
+    document.addEventListener('click', async function(e) {
+    // Handle case where target might be a text node or child element
+    let link = e.target;
+    // If target is not an anchor, try to find the closest anchor
+    if (link.nodeName !== 'A') {
+      link = link.closest('a');
+    }
+    if (!link || link.nodeName !== 'A') return;
+    
+    const href = link.getAttribute('href');
+    // Check if this is a download link we should intercept
+    const isDownloadLink = href === '#' || 
+                          (href && (href.includes('.csv') || href.includes('.zip') || href.includes('.xlsx') || href.includes('/assets/data/')));
+    
+    if (!isDownloadLink) return;
+    
+    console.log('Download link clicked:', href, link.textContent);
+    
+    // Prevent default navigation
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Extract filename
     const filenameSpan = link.querySelector('span');
     const filenameText = filenameSpan ? filenameSpan.textContent.trim() : link.textContent.trim();
     const filename = filenameText.split(' ')[0];
+    
+    console.log('Extracted filename:', filename);
+    
+    if (!filename) {
+      console.warn('No filename found for link:', link);
+      return; // Skip if no filename found
+    }
+    
+    const originalHTML = link.innerHTML;
+    link.innerHTML = '<span style="color: black;">Loading...</span>';
+    link.style.pointerEvents = 'none';
 
-    link.addEventListener('click', async function (e) {
-      e.preventDefault();
-      const originalHTML = link.innerHTML;
-      link.innerHTML = '<span style="color: black;">Loading...</span>';
-      link.style.pointerEvents = 'none';
+    try {
+      const files = await fetchMetadataOnce();
+      const file = files.find(f => f.label === filename);
 
-      try {
-        const files = await fetchMetadataOnce();
-        const file = files.find(f => f.label === filename);
-
-        if (!file) {
-          console.error(`File "${filename}" not found in metadata`);
-          alert(`File "${filename}" not found in dataset.`);
-          return;
-        }
-
-        const fileId = file.dataFile.id;
-        const downloadUrl = `${DOMAIN}/api/access/datafile/${fileId}`;
-        const tempLink = document.createElement('a');
-        tempLink.href = downloadUrl;
-        tempLink.download = filename;
-        tempLink.target = '_blank';
-        document.body.appendChild(tempLink);
-        tempLink.click();
-        document.body.removeChild(tempLink);
-      } catch (err) {
-        console.error(`Error downloading file "${filename}":`, err);
-        alert(`Error downloading file "${filename}": ${err.message}`);
-      } finally {
+      if (!file) {
+        console.error(`File "${filename}" not found in metadata`);
+        alert(`File "${filename}" not found in dataset.`);
         link.innerHTML = originalHTML;
         link.style.pointerEvents = 'auto';
+        return;
       }
-    });
+
+      const fileId = file.dataFile.id;
+      const downloadUrl = `${DOMAIN}/api/access/datafile/${fileId}`;
+      const tempLink = document.createElement('a');
+      tempLink.href = downloadUrl;
+      tempLink.download = filename;
+      tempLink.target = '_blank';
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+    } catch (err) {
+      console.error(`Error downloading file "${filename}":`, err);
+      alert(`Error downloading file "${filename}": ${err.message}`);
+    } finally {
+      link.innerHTML = originalHTML;
+      link.style.pointerEvents = 'auto';
+    }
+    }, true); // Use capture phase to catch before other handlers
+  }
+
+  // Also process existing links to update their hrefs and styling
+  const downloadLinks = document.querySelectorAll('a[href="#"]:not(.download-processed), a[href*=".csv"]:not(.download-processed), a[href*=".zip"]:not(.download-processed), a[href*=".xlsx"]:not(.download-processed), a[href*="/assets/data/"]:not(.download-processed)');
+  console.log(`Found ${downloadLinks.length} download links to process`);
+
+  downloadLinks.forEach(link => {
+    // Update href to "#" to prevent navigation if it's a local file path
+    const originalHref = link.getAttribute('href');
+    if (originalHref && originalHref !== '#' && (originalHref.startsWith('/') || originalHref.startsWith('./') || originalHref.includes('.csv') || originalHref.includes('.zip') || originalHref.includes('.xlsx'))) {
+      link.setAttribute('data-original-href', originalHref);
+      link.href = '#';
+    }
 
     // Mark as processed
     link.classList.add('download-processed');
 
     // Style
+    const filenameSpan = link.querySelector('span');
     if (filenameSpan) {
       link.title = "Click to download";
       link.style.cursor = "pointer";
     }
   });
 };
+
+// Auto-initialize: Call immediately for static links
+if (window.initDataverseDownloadLinks) {
+    window.initDataverseDownloadLinks();
+}
+
+// Also call after dynamic content loads (CSV tables)
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (window.initDataverseDownloadLinks) {
+            window.initDataverseDownloadLinks();
+        }
+    }, 1000);
+});
+
+// Call after window load as well
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        if (window.initDataverseDownloadLinks) {
+            window.initDataverseDownloadLinks();
+        }
+    }, 500);
+});
