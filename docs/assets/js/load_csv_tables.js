@@ -25,6 +25,7 @@ function populateTable({ id, csv, withOld }) {
 
   // Check if this is a model table
   const isModelTable = id === 'models-table' || id === 'orig-models-table';
+  const isOrigModelsTable = id === 'orig-models-table';
 
   fetch(csv)
     .then(r => r.ok ? r.text() : Promise.reject(`${csv} → ${r.status}`))
@@ -49,11 +50,16 @@ function populateTable({ id, csv, withOld }) {
           cells.push(`<td>${segment}</td>`);
 
           const baseName = `${colon}_${segment}`.toLowerCase();
-          const modelLabel = `${baseName}_model.zip`;
-          const moldLabel = `${baseName}_mold.zip`;
+          const modelLabel = `${baseName}_model.zip`; 
+          const isFullSegment = isOrigModelsTable && segment?.trim().toLowerCase() === 'full';
+          const moldLabel = isFullSegment ? '' : `${baseName}_mold.zip`;
 
           cells.push(`<td><a href="#"><span>${modelLabel}</span></a></td>`);
-          cells.push(`<td><a href="#"><span>${moldLabel}</span></a></td>`);
+          cells.push(
+            moldLabel
+              ? `<td><a href="#"><span>${moldLabel}</span></a></td>`
+              : '<td></td>'
+          );
         } else {
 
         headers.forEach((h, i) => {
